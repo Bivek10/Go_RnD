@@ -1,10 +1,15 @@
 package main
 
-
 import (
-	"fmt_api/api/api.go"
+	"fmt"
+
+	"bivek.com/fmt_api/helper"
 )
 
-func main(){
-	api.startApp()
+func main() {
+	runApp()
+}
+func runApp() {
+	helper.ConnectDB()
+	fmt.Println("fmt running")
 }
