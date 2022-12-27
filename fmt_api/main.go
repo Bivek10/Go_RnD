@@ -1,15 +1,13 @@
 package main
 
 import (
-	"fmt"
-
-	"bivek.com/fmt_api/helper"
+	"bivek.com/fmt_api/operations"
 )
 
 func main() {
 	runApp()
 }
 func runApp() {
-	helper.ConnectDB()
-	fmt.Println("fmt running")
+	operations.Login("ram@gmail.com", "1234")
+	//operations.Migrate()
 }

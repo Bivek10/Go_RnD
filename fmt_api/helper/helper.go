@@ -3,6 +3,7 @@ package helper
 import (
 	"fmt"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -22,4 +23,9 @@ func HandleError(err error) {
 	if err != nil {
 		panic(err.Error())
 	}
+}
+func EncryptPassword(pass []byte) string {
+	value, err := bcrypt.GenerateFromPassword(pass, bcrypt.MinCost)
+	HandleError(err)
+	return  string(value)
 }
