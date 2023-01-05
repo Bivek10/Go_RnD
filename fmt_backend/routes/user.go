@@ -21,7 +21,8 @@ func (i UserRoutes) Setup() {
 	users := i.router.Gin.Group("/users")
 	{
 		users.GET("", i.userController.GetAllUsers)
-		users.POST("createuser", i.trxMiddleware.DBTransactionHandle(), i.userController.CreateUser)
+		users.POST("register", i.trxMiddleware.DBTransactionHandle(), i.userController.CreateUser)
+		users.POST("login", i.userController.UserLogin)
 	}
 }
 

@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/bivek/fmt_backend/infrastructure"
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/utils"
@@ -34,6 +36,7 @@ func (c UserRepository) WithTrx(trxHandle *gorm.DB) UserRepository {
 
 // Save -> User
 func (c UserRepository) Create(User models.User) error {
+
 	return c.db.DB.Create(&User).Error
 }
 
@@ -48,12 +51,30 @@ func (c UserRepository) GetAllUsers(pagination utils.Pagination) ([]models.User,
 		searchQuery := "%" + pagination.Keyword + "%"
 		queryBuilder.Where(c.db.DB.Where("`users`.`name` LIKE ?", searchQuery))
 	}
-
 	err := queryBuilder.
 		Find(&users).
 		Offset(-1).
 		Limit(-1).
 		Count(&totalRows).Error
 	return users, totalRows, err
-	
+}
+
+func (c UserRepository) LoginUser(email string, password string) (models.User, error) {
+	users := models.User{}
+
+	queryBuilder := c.db.DB
+	queryBuilder = queryBuilder.Model(&models.User{})
+	queryBuilder.Where(&models.User{Email: email})
+	err := queryBuilder.Find(&users).Error
+	fmt.Printf("hased password %v", users.Password)
+	fmt.Printf("unhased password %v", password)
+	isTrue := utils.DecryptPassword([]byte(users.Password), []byte(password))
+	if isTrue {
+		fmt.Println("password matched")
+
+		//fmt.Println(err)
+
+	}
+	return users, err
+
 }

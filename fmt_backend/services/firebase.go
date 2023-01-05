@@ -26,7 +26,7 @@ func (fb *FirebaseService) CreateUser(email, password string) (string, error) {
 	params := (&auth.UserToCreate{}).
 		Email(email).
 		Password(password)
-
+	
 	u, err := fb.client.CreateUser(context.Background(), params)
 
 	if err != nil {
@@ -56,6 +56,7 @@ func (fb *FirebaseService) VerifyToken(idToken string) (*auth.Token, error) {
 // GetUserByEmail gets the user data corresponding to the specified email.
 func (fb *FirebaseService) GetUserByEmail(email string) (*auth.UserRecord, error) {
 	user, err := fb.client.GetUserByEmail(context.Background(), email)
+	
 	return user, err
 }
 
@@ -76,7 +77,6 @@ func (fb *FirebaseService) SetClaim(uid string, claims gin.H) error {
 
 	err := fb.client.SetCustomUserClaims(context.Background(), uid, claims)
 	return err
-
 }
 
 // UpdateEmailVerification update firebase user email verify

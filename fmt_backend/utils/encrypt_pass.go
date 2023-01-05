@@ -5,9 +5,19 @@ import (
 )
 
 func EncryptPassword(pass []byte) string {
+
 	value, err := bcrypt.GenerateFromPassword(pass, bcrypt.MinCost)
 	if err != nil {
 		panic(err)
 	}
 	return string(value)
+}
+
+func DecryptPassword(hasedpass []byte, pass []byte) bool {
+	err := bcrypt.CompareHashAndPassword(hasedpass, pass)
+	if err != nil {
+		panic(err)
+	}
+	return true
+
 }
