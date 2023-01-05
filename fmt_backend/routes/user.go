@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/bivek/fmt_backend/controllers"
-	"github.com/bivek/fmt_backend/middlewares"
 	"github.com/bivek/fmt_backend/infrastructure"
+	"github.com/bivek/fmt_backend/middlewares"
 )
 
 // UserRoutes -> struct
@@ -21,7 +21,7 @@ func (i UserRoutes) Setup() {
 	users := i.router.Gin.Group("/users")
 	{
 		users.GET("", i.userController.GetAllUsers)
-		users.POST("", i.trxMiddleware.DBTransactionHandle(), i.userController.CreateUser)
+		users.POST("createuser", i.trxMiddleware.DBTransactionHandle(), i.userController.CreateUser)
 	}
 }
 

@@ -1,14 +1,16 @@
 package controllers
 
 import (
-	"github.com/bivek/fmt_backend/responses"
-	"github.com/bivek/fmt_backend/services"
+	"fmt"
+	"net/http"
+
 	"github.com/bivek/fmt_backend/constants"
 	"github.com/bivek/fmt_backend/errors"
 	"github.com/bivek/fmt_backend/infrastructure"
 	"github.com/bivek/fmt_backend/models"
+	"github.com/bivek/fmt_backend/responses"
+	"github.com/bivek/fmt_backend/services"
 	"github.com/bivek/fmt_backend/utils"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -16,21 +18,24 @@ import (
 
 // UserController -> struct
 type UserController struct {
-	logger      infrastructure.Logger
-	userService services.UserService
-	env         infrastructure.Env
+	logger          infrastructure.Logger
+	userService     services.UserService
+	firebaseService services.FirebaseService
+	env             infrastructure.Env
 }
 
 // NewUserController -> constructor
 func NewUserController(
 	logger infrastructure.Logger,
 	userService services.UserService,
+	firebaseSerivce services.FirebaseService,
 	env infrastructure.Env,
 ) UserController {
 	return UserController{
-		logger:      logger,
-		userService: userService,
-		env:         env,
+		logger:          logger,
+		userService:     userService,
+		firebaseService: firebaseSerivce,
+		env:             env,
 	}
 }
 
@@ -46,6 +51,19 @@ func (cc UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
+	userid, err := cc.firebaseService.CreateUser(user.Email, user.Password)
+	fmt.Printf("")
+	if err != nil {
+		cc.logger.Zap.Error("Error [FirebaseUser] failed: ", err.Error())
+		err := errors.InternalError.Wrap(err, "Failed to create firebase user")
+		responses.HandleError(c, err)
+		return
+	}
+
+	user.UserId = userid
+	//encrypt user password.
+	user.Password = utils.EncryptPassword([]byte(user.Password))
+
 	if err := cc.userService.WithTrx(trx).CreateUser(user); err != nil {
 		cc.logger.Zap.Error("Error [CreateUser] [db CreateUser]: ", err.Error())
 		err := errors.InternalError.Wrap(err, "Failed to create user")
@@ -54,6 +72,7 @@ func (cc UserController) CreateUser(c *gin.Context) {
 	}
 
 	responses.SuccessJSON(c, http.StatusOK, "User Created Sucessfully")
+
 }
 
 // GetAllUser -> Get All User
@@ -67,6 +86,6 @@ func (cc UserController) GetAllUsers(c *gin.Context) {
 		responses.HandleError(c, err)
 		return
 	}
-
 	responses.JSONCount(c, http.StatusOK, users, count)
+
 }

@@ -2,18 +2,18 @@ package infrastructure
 
 import (
 	"fmt"
-	"github.com/golang-migrate/migrate/v4"
+	//"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-//Migrations -> Migration Struct
+// Migrations -> Migration Struct
 type Migrations struct {
 	logger Logger
 	env    Env
 }
 
-//NewMigrations -> return new Migrations struct
+// NewMigrations -> return new Migrations struct
 func NewMigrations(
 	logger Logger,
 	env Env,
@@ -24,7 +24,7 @@ func NewMigrations(
 	}
 }
 
-//Migrate -> migrates all table
+// Migrate -> migrates all table
 func (m Migrations) Migrate() {
 	m.logger.Zap.Info("Migrating schemas...")
 
@@ -46,12 +46,12 @@ func (m Migrations) Migrate() {
 			DBNAME,
 		)
 	}
+	fmt.Print(dsn)
+	// migrations, err := migrate.New("file://migration/", "mysql://"+dsn)
 
-	migrations, err := migrate.New("file://migration/", "mysql://"+dsn)
-
-	m.logger.Zap.Info("--- Running Migration ---")
-	err = migrations.Steps(1000)
-	if err != nil {
-		m.logger.Zap.Error("Error in migration: ", err.Error())
-	}
+	// m.logger.Zap.Info("--- Running Migration ---")
+	// err = migrations.Steps(1000)
+	// if err != nil {
+	// 	m.logger.Zap.Error("Error in migration: ", err.Error())
+	// }
 }

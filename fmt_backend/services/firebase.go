@@ -1,8 +1,9 @@
 package services
 
 import (
-	"github.com/bivek/fmt_backend/constants"
 	"context"
+
+	"github.com/bivek/fmt_backend/constants"
 
 	"firebase.google.com/go/auth"
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,9 @@ func (fb *FirebaseService) CreateUser(email, password string) (string, error) {
 	params := (&auth.UserToCreate{}).
 		Email(email).
 		Password(password)
+
 	u, err := fb.client.CreateUser(context.Background(), params)
+
 	if err != nil {
 		return "", err
 	}

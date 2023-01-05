@@ -1,7 +1,12 @@
 CREATE TABLE IF NOT EXISTS users (
   id INT NOT NULL AUTO_INCREMENT,
+  user_id VARCHAR(45) NOT NULL,
   full_name VARCHAR(45) NULL,
   email VARCHAR(100) NOT NULL,
+  phone_number VARCHAR(10) NOT NULL,
+  address   VARCHAR(100)  NOT NULL,
+  designation VARCHAR(100) NOT NULL,
+  password  VARCHAR(250) NOT NULL,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NULL,
   deleted_at DATETIME NULL,
