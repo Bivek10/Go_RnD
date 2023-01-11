@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	//"fmt"
 	"net/http"
 
 	"github.com/bivek/fmt_backend/constants"
@@ -51,17 +51,17 @@ func (cc UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	userid, err := cc.firebaseService.CreateUser(user.Email, user.Password)
-	fmt.Printf("")
-	if err != nil {
-		cc.logger.Zap.Error("Error [FirebaseUser] failed: ", err.Error())
-		err := errors.InternalError.Wrap(err, "Failed to create firebase user")
-		responses.HandleError(c, err)
-		return
-	}
-
-	user.UserId = userid
+	//userid, err := cc.firebaseService.CreateUser(user.Email, user.Password)
+	// fmt.Printf("")
+	// if err != nil {
+	// 	cc.logger.Zap.Error("Error [FirebaseUser] failed: ", err.Error())
+	// 	err := errors.InternalError.Wrap(err, "Failed to create firebase user")
+	// 	responses.HandleError(c, err)
+	// 	return
+	// }
+	// user.UserId = userid
 	//encrypt user password.
+	
 	user.Password = utils.EncryptPassword([]byte(user.Password))
 
 	if err := cc.userService.WithTrx(trx).CreateUser(user); err != nil {
@@ -99,16 +99,16 @@ func (cc UserController) UserLogin(c *gin.Context) {
 		return
 	}
 
-	users, err := cc.firebaseService.GetUserByEmail(user.Email)
+	//token, err := cc.firebaseService.VerifyToken();
 
-	if err != nil {
-		cc.logger.Zap.Error("Email not found", err.Error())
-		err := errors.InternalError.Wrap(err, "Failed to get users by email")
-		responses.HandleError(c, err)
-		return
-	}
+	// if err != nil {
+	// 	cc.logger.Zap.Error("Email not found", err.Error())
+	// 	err := errors.InternalError.Wrap(err, "Failed to get users by email")
+	// 	responses.HandleError(c, err)
+	// 	return
+	// }
 
-	fmt.Println(users.UID)
+	// fmt.Println(users.UID)
 	//check from local database
 
 	//encrypt pass
@@ -116,6 +116,7 @@ func (cc UserController) UserLogin(c *gin.Context) {
 	//fmt.Println(password)
 
 	localusers, err := cc.userService.UserLogin(user.Email, user.Password)
+
 	//fmt.Println(password)
 	//fmt.Println(err)
 
