@@ -38,13 +38,13 @@ func (p PlantRepository) CreatePlant(Plant models.Plant) error {
 
 //GetAll plants
 
-func (c PlantRepository) GetAllPlants(pagination utils.Pagination)([]models.Plant, int64, error){
-	var plants [] models.Plant
-	var totalRows int64 =0
+func (c PlantRepository) GetAllPlants(pagination utils.Pagination) ([]models.Plant, int64, error) {
+	var plants []models.Plant
+	var totalRows int64 = 0
 	queryBuilder := c.db.DB.Limit(pagination.PageSize).Offset(pagination.Offset).Order("create_at desc")
-	queryBuilder=queryBuilder.Model(&models.Plant{})
+	queryBuilder = queryBuilder.Model(&models.Plant{})
 
-	if pagination.Keyword !=""{
+	if pagination.Keyword != "" {
 		searchQuery := "%" + pagination.Keyword + "%"
 		queryBuilder.Where(c.db.DB.Where("`plants`.`name` LIKE ?", searchQuery))
 	}
@@ -54,8 +54,19 @@ func (c PlantRepository) GetAllPlants(pagination utils.Pagination)([]models.Plan
 
 //Getplant by ID
 
+func (c PlantRepository) GetPlantById(plantID string) (models.Plant, error) {
+	plant := models.Plant{}
+	queryBuilder := c.db.DB
+	queryBuilder = queryBuilder.Model(&models.Plant{})
+	queryBuilder.Where(&models.Plant{PlantId: plantID})
+	err := queryBuilder.Find(&plant).Error
+	return plant, err
+}
 
+// updateplant data by ID
 
+func (c PlantRepository) updateplant(Plant models.Plant) error {
+	queryBuilder := c.db.DB.Updates(&Plant).Error
 
-
-
+	return queryBuilder
+}
