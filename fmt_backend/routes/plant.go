@@ -23,8 +23,10 @@ func (i PlantRoutes) Setup() {
 	plants := i.router.Gin.Group("/plants")
 	{
 
-		plants.GET("",i.middlewares.Handle() ,i.plantController.GetAllPlant)
+		plants.GET("", i.middlewares.Handle(), i.plantController.GetAllPlant)
 		plants.POST("addPlant", i.trxMiddleware.DBTransactionHandle(), i.plantController.CreatePlant)
+		plants.GET("/getPlant/:id", i.plantController.GetPlantByID)
+		plants.PUT("updatePlant", i.trxMiddleware.DBTransactionHandle(), i.plantController.UpdatePlant)
 	}
 }
 

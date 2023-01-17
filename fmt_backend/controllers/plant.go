@@ -31,7 +31,7 @@ func NewPlantController(logger infrastructure.Logger, plantService services.Plan
 	}
 }
 
-//create plant
+// create plant
 func (cc PlantController) CreatePlant(c *gin.Context) {
 	plant := models.Plant{}
 	trx := c.MustGet(constants.DBTransaction).(*gorm.DB)
@@ -64,4 +64,30 @@ func (cc PlantController) GetAllPlant(c *gin.Context) {
 		return
 	}
 	responses.JSONCount(c, http.StatusOK, plants, count)
+}
+
+// get plant by ID
+
+func (cc PlantController) GetPlantByID(c *gin.Context,) {
+	plantID:=c.Param("id")
+	plants, err := cc.plantService.GetPlantByID(plantID)
+	if err != nil {
+		cc.logger.Zap.Error("Error finding plant records", err.Error())
+		err := errors.InternalError.Wrap(err, "Failed to get plant data by ID")
+		responses.HandleError(c, err)
+		return
+	}
+	responses.SuccessJSON(c, http.StatusOK, plants)
+}
+
+func (cc PlantController) UpdatePlant(c *gin.Context) {
+	plant := models.Plant{}
+	err := cc.plantService.UpdatePlant(plant)
+	if err != nil {
+		cc.logger.Zap.Error("Error finding plant records", err.Error())
+		err := errors.InternalError.Wrap(err, "Failed to udpate plant data")
+		responses.HandleError(c, err)
+		return
+	}
+	responses.SuccessJSON(c, http.StatusOK, "Plant data update successfully")
 }

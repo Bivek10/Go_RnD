@@ -64,9 +64,7 @@ func (c PlantRepository) GetPlantById(plantID string) (models.Plant, error) {
 }
 
 // updateplant data by ID
-
-func (c PlantRepository) updateplant(Plant models.Plant) error {
+func (c PlantRepository) UpdatePlant(Plant models.Plant) error {
 	queryBuilder := c.db.DB.Updates(&Plant).Error
-
 	return queryBuilder
 }

@@ -8,31 +8,42 @@ import (
 	"gorm.io/gorm"
 )
 
-
-type PlantService struct{
+type PlantService struct {
 	repository repository.PlantRepository
 }
 
-func NewPlantService (repository repository.PlantRepository) PlantService{
+func NewPlantService(repository repository.PlantRepository) PlantService {
 	return PlantService{
 		repository: repository,
 	}
 }
 
-func (c PlantService) WithTrx(trxHandle *gorm.DB) PlantService{
-	c.repository=c.repository.WithTrx(trxHandle)
+func (c PlantService) WithTrx(trxHandle *gorm.DB) PlantService {
+	c.repository = c.repository.WithTrx(trxHandle)
 	return c
 }
 
-//createplant -> call to create the plant
-func (c PlantService) CreatePlant(plant models.Plant) error{
+// createplant -> call to create the plant
+func (c PlantService) CreatePlant(plant models.Plant) error {
 	err := c.repository.CreatePlant(plant)
 	return err
-} 
+}
 
 //GetAllPlant -> call to get all the user
 
-func (c PlantService) GetAllPlant(pagination utils.Pagination)([] models.Plant, int64, error){
+func (c PlantService) GetAllPlant(pagination utils.Pagination) ([]models.Plant, int64, error) {
 	return c.repository.GetAllPlants(pagination)
-} 
+}
 
+//Get plant by ID
+
+func (c PlantService) GetPlantByID(plantID string) (models.Plant, error) {
+	return c.repository.GetPlantById(plantID)
+}
+
+//update plantdata
+
+func (c PlantService) UpdatePlant(Plant models.Plant) error {
+	err := c.repository.UpdatePlant(Plant)
+	return err
+}
