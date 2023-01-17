@@ -17,12 +17,13 @@ type PlantRoutes struct {
 }
 
 // setup plant routes
-
 func (i PlantRoutes) Setup() {
+
 	i.logger.Zap.Info("setting up plants routes")
 	plants := i.router.Gin.Group("/plants")
 	{
-		plants.GET("", i.plantController.GetAllPlant)
+
+		plants.GET("",i.middlewares.Handle() ,i.plantController.GetAllPlant)
 		plants.POST("addPlant", i.trxMiddleware.DBTransactionHandle(), i.plantController.CreatePlant)
 	}
 }

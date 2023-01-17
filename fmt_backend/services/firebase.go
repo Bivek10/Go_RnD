@@ -26,12 +26,14 @@ func (fb *FirebaseService) CreateUser(email, password string) (string, error) {
 	params := (&auth.UserToCreate{}).
 		Email(email).
 		Password(password)
-	
+
 	u, err := fb.client.CreateUser(context.Background(), params)
 
 	if err != nil {
 		return "", err
 	}
+	
+	//print(u.TokensValidAfterMillis)
 	return u.UID, err
 }
 
@@ -53,10 +55,11 @@ func (fb *FirebaseService) VerifyToken(idToken string) (*auth.Token, error) {
 	return token, err
 }
 
+
 // GetUserByEmail gets the user data corresponding to the specified email.
 func (fb *FirebaseService) GetUserByEmail(email string) (*auth.UserRecord, error) {
 	user, err := fb.client.GetUserByEmail(context.Background(), email)
-	
+
 	return user, err
 }
 
@@ -69,6 +72,7 @@ func (fb *FirebaseService) UpdateUser(UID string, user *auth.UserToUpdate) (*aut
 // GetUser gets firebase user from uid
 func (fb *FirebaseService) GetUser(uid string) (*auth.UserRecord, error) {
 	user, err := fb.client.GetUser(context.Background(), uid)
+	
 	return user, err
 }
 
@@ -99,4 +103,9 @@ func (fb *FirebaseService) DisableUser(uid string, enable bool) error {
 func (fb *FirebaseService) DeleteUser(uid string) error {
 	err := fb.client.DeleteUser(context.Background(), uid)
 	return err
+}
+
+func (fb *FirebaseService) CreateCustomToken(uid string) (string, error) {
+	token, err := fb.client.CustomToken(context.Background(), uid)
+	return token, err
 }

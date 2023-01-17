@@ -67,3 +67,7 @@ then run this command ,
 -sudo chown $USER /var/run/docker.sock
 and, 
 -docker-compose build
+
+
+
+<!-- inotifywait -e modify -e move -e create -e delete -e attrib --exclude '(__debug_bin|\.git|\.idea|\.http|\.json)' -r . -->

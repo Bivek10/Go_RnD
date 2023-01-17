@@ -52,6 +52,10 @@ func (c PlantRepository) GetAllPlants(pagination utils.Pagination)([]models.Plan
 	return plants, totalRows, err
 }
 
+//Getplant by ID
+
+
+
 
 
 

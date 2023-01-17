@@ -42,7 +42,7 @@ func NewUserController(
 // CreateUser -> Create User
 func (cc UserController) CreateUser(c *gin.Context) {
 	user := models.User{}
-	trx := c.MustGet(constants.DBTransaction).(*gorm.DB)
+	trx := c.MustGet(constants.DBTransaction).(*gorm.DB) // explicitly define the value type..
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		cc.logger.Zap.Error("Error [CreateUser] (ShouldBindJson) : ", err)
@@ -51,17 +51,18 @@ func (cc UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	//userid, err := cc.firebaseService.CreateUser(user.Email, user.Password)
-	// fmt.Printf("")
-	// if err != nil {
-	// 	cc.logger.Zap.Error("Error [FirebaseUser] failed: ", err.Error())
-	// 	err := errors.InternalError.Wrap(err, "Failed to create firebase user")
-	// 	responses.HandleError(c, err)
-	// 	return
-	// }
-	// user.UserId = userid
-	//encrypt user password.
-	
+	userid, err := cc.firebaseService.CreateUser(user.Email, user.Password)
+
+	//fmt.Printf("")
+	if err != nil {
+		cc.logger.Zap.Error("Error [FirebaseUser] failed: ", err.Error())
+		err := errors.InternalError.Wrap(err, "Failed to create firebase user")
+		responses.HandleError(c, err)
+		return
+	}
+	user.UserId = userid
+	//encrypt user password
+
 	user.Password = utils.EncryptPassword([]byte(user.Password))
 
 	if err := cc.userService.WithTrx(trx).CreateUser(user); err != nil {
@@ -92,6 +93,7 @@ func (cc UserController) GetAllUsers(c *gin.Context) {
 // userlogin
 func (cc UserController) UserLogin(c *gin.Context) {
 	user := models.UserLoginModel{}
+	loginResponse := models.LoginResponseModel{}
 	if err := c.ShouldBindJSON(&user); err != nil {
 		cc.logger.Zap.Error("Error [CreateUser] (ShouldBindJson) : ", err)
 		err := errors.BadRequest.Wrap(err, "Failed to bind user data")
@@ -99,35 +101,44 @@ func (cc UserController) UserLogin(c *gin.Context) {
 		return
 	}
 
-	//token, err := cc.firebaseService.VerifyToken();
+	users, err := cc.firebaseService.GetUserByEmail(user.Email)
 
-	// if err != nil {
-	// 	cc.logger.Zap.Error("Email not found", err.Error())
-	// 	err := errors.InternalError.Wrap(err, "Failed to get users by email")
-	// 	responses.HandleError(c, err)
-	// 	return
-	// }
-
-	// fmt.Println(users.UID)
-	//check from local database
-
-	//encrypt pass
-	//password := utils.EncryptPassword([]byte(user.Password))
-	//fmt.Println(password)
-
-	localusers, err := cc.userService.UserLogin(user.Email, user.Password)
-
-	//fmt.Println(password)
-	//fmt.Println(err)
 
 	if err != nil {
-		cc.logger.Zap.Error("Error: [User not found in DB]", err.Error())
-		err := errors.InternalError.Wrap(err, "Failed to get user from DB")
+		cc.logger.Zap.Error("Email not found", err.Error())
+		err := errors.InternalError.Wrap(err, "Failed to get users by email")
 		responses.HandleError(c, err)
+		return
 	}
+	
 
-	responses.JSON(c, 200, localusers)
+	token, err := cc.firebaseService.CreateCustomToken(users.UID)
 
+	if err != nil {
+		cc.logger.Zap.Error("error generating token", err.Error())
+		err := errors.InternalError.Wrap(err, "Failed to get token")
+		responses.HandleError(c, err)
+		return
+	}
+	loginResponse.AccessToken = token
+
+	// check from local database
+
+	// encrypt pass
+	// password := utils.EncryptPassword([]byte(user.Password))
+	// fmt.Println(password)
+
+	//localusers, err := cc.userService.UserLogin(user.Email, user.Password)
+
+	// fmt.Println(password)
+	// fmt.Println(err)
+
+	// if err != nil {
+	// 	cc.logger.Zap.Error("Error: [User not found in DB]", err.Error())
+	// 	err := errors.InternalError.Wrap(err, "Failed to get user from DB")
+	// 	responses.HandleError(c, err)
+	// }
+	responses.JSON(c, 200, loginResponse)
 	//user, err := cc.firebaseService.GetUserByEmail(user.Email);
 
 }

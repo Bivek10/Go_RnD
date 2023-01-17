@@ -10,7 +10,6 @@ import (
 	"github.com/bivek/fmt_backend/responses"
 	"github.com/bivek/fmt_backend/services"
 	"github.com/bivek/fmt_backend/utils"
-
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -32,41 +31,37 @@ func NewPlantController(logger infrastructure.Logger, plantService services.Plan
 	}
 }
 
-//create plant 
-
-func (cc PlantController) CreatePlant(c *gin.Context){
-	plant:=models.Plant{}
+//create plant
+func (cc PlantController) CreatePlant(c *gin.Context) {
+	plant := models.Plant{}
 	trx := c.MustGet(constants.DBTransaction).(*gorm.DB)
 
-	if err:= c.ShouldBindJSON(&plant); err !=nil{
-		cc.logger.Zap.Error("Error [create plant] (should Bind Json): ",err)
-		responses.HandleError(c,err)
+	if err := c.ShouldBindJSON(&plant); err != nil {
+		cc.logger.Zap.Error("Error [create plant] (should Bind Json): ", err)
+		responses.HandleError(c, err)
 		return
 	}
 
-	if err:=cc.plantService.WithTrx(trx).CreatePlant(plant); err !=nil{
+	if err := cc.plantService.WithTrx(trx).CreatePlant(plant); err != nil {
 		cc.logger.Zap.Error("Error [create user] [db create user]: ", err.Error())
 		err := errors.InternalError.Wrap(err, "Failed to create user")
 
-		responses.HandleError(c,err)
+		responses.HandleError(c, err)
 		return
 	}
 	responses.SuccessJSON(c, http.StatusOK, "Plant data created succesfully")
 
 }
 
-// get allplant 
-func (cc PlantController) GetAllPlant (c *gin.Context){
-	pagination :=utils.BuildPagination(c)
-	plants, count, err :=cc.plantService.GetAllPlant(pagination)
-	if err !=nil{
-		cc.logger.Zap.Error("Error finding plant records",err.Error())
+// get allplant  datassssss
+func (cc PlantController) GetAllPlant(c *gin.Context) {
+	pagination := utils.BuildPagination(c)
+	plants, count, err := cc.plantService.GetAllPlant(pagination)
+	if err != nil {
+		cc.logger.Zap.Error("Error finding plant records", err.Error())
 		err := errors.InternalError.Wrap(err, "Failed to get users data")
-		responses.HandleError(c,err)
-		return 
+		responses.HandleError(c, err)
+		return
 	}
 	responses.JSONCount(c, http.StatusOK, plants, count)
 }
-
-
-

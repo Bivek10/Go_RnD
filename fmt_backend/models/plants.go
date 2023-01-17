@@ -9,7 +9,7 @@ type Plant struct {
 	Temperature    string `json:"temperature"`
 	Description    string `json:"description"`
 	ImageUrl       string `json:"image_url"`
-	GrowingSession string `json:"growing_season"`
+	GrowingSeason  string `json:"growing_season"`
 }
 
 func (m Plant) TableName() string {
@@ -19,13 +19,13 @@ func (m Plant) TableName() string {
 // to map convert plants to map
 func (m Plant) ToMap() map[string]interface{} {
 	return map[string]interface{}{
-		"plant_id":         m.PlantId,
-		"plant_name":       m.PlantName,
-		"scientific_name":  m.ScientificName,
-		"plant_type":       m.PlantType,
-		"temperature":      m.Temperature,
-		"description":      m.Description,
-		"image_url":        m.ImageUrl,
-		"growing_season": m.GrowingSession,
+		"plant_id":        m.PlantId,
+		"plant_name":      m.PlantName,
+		"scientific_name": m.ScientificName,
+		"plant_type":      m.PlantType,
+		"temperature":     m.Temperature,
+		"description":     m.Description,
+		"image_url":       m.ImageUrl,
+		"growing_season":  m.GrowingSeason,
 	}
 }
