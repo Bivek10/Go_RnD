@@ -47,3 +47,5 @@ func (c PlantService) UpdatePlant(Plant models.Plant) error {
 	err := c.repository.UpdatePlant(Plant)
 	return err
 }
+
+

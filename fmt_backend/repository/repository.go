@@ -6,4 +6,6 @@ import "go.uber.org/fx"
 var Module = fx.Options(
 	fx.Provide(NewUserRepository),
 	fx.Provide(NewPlantRepository),
+	fx.Provide(NewQuizRepository),
+	fx.Provide(NewQuestionRepository),
 )
