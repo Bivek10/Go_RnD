@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS plants (
   description TEXT NOT NULL,
   image_url VARCHAR(250) NOT NULL,
   growing_season VARCHAR(250) NOT NULL,
-  created_at DATETIME NOT NULL,
+  created_at DATETIME NULL,
   updated_at DATETIME NULL,
   deleted_at DATETIME NULL,
   PRIMARY KEY (id)

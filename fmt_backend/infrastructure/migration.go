@@ -11,7 +11,7 @@ import (
 
 // Migrations -> Migration Struct
 type Migrations struct {
-	logger Logger  
+	logger Logger
 	env    Env
 }
 
