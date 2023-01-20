@@ -8,4 +8,5 @@ var Module = fx.Options(
 	fx.Provide(NewPlantRepository),
 	fx.Provide(NewQuizRepository),
 	fx.Provide(NewQuestionRepository),
+	fx.Provide(NewChoiceRepository),
 )

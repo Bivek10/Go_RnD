@@ -29,8 +29,8 @@ func (q QuestionRepository) WithTrx(trxHandle *gorm.DB) QuestionRepository {
 }
 
 // save -> quiz data.
-func (q QuestionRepository) CreateQuestion(Quizs models.Questions) error {
-	return q.db.DB.Create(&Quizs).Error
+func (q QuestionRepository) CreateQuestion(Question models.Questions) error {
+	return q.db.DB.Create(&Question).Error
 }
 
 func (c QuestionRepository) GetAllQuestion(pagination utils.Pagination) ([]models.Questions, int64, error) {
@@ -53,12 +53,7 @@ func (c QuestionRepository) GetQuestionsByQuiz(pagination utils.Pagination, quiz
 	var err error
 	queryBuilder := c.db.DB.Limit(pagination.PageSize).Offset(pagination.Offset).Order("created_at desc")
 	queryBuilder = queryBuilder.Model(&models.Questions{})
-
-	if pagination.Keyword != "" {
-		queryBuilder.Where(&models.Questions{Quiz_ID: quiz_id})
-		err = queryBuilder.Find(&questions).Error
-		//searchQuery := "%" + pagination.Keyword + "%"
-		//queryBuilder.Where(c.db.DB.Where("`quizs`.`name` LIKE ?", searchQuery))
-	}
+	queryBuilder.Where(&models.Questions{Quiz_ID: quiz_id})
+	err = queryBuilder.Find(&questions).Error
 	return questions, totalRows, err
 }

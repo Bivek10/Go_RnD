@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS choices(
     c_id  INT NOT NULL AUTO_INCREMENT,
     choice TEXT NOT NULL,
-    isCorrect BOOLEAN,
+    is_correct INT NOT NULL,
     q_id INT NOT NULL,
     created_at DATETIME NULL,
     updated_at DATETIME    NULL,

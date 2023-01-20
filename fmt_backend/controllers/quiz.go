@@ -65,3 +65,4 @@ func (qq QuizController) GetAllQuiz(c *gin.Context) {
 	}
 	responses.JSONCount(c, http.StatusOK, quizs, count)
 }
+

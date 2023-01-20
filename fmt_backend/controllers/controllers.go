@@ -8,4 +8,6 @@ var Module = fx.Options(
 	fx.Provide(NewUtilityController),
 	fx.Provide(NewPlantController),
 	fx.Provide(NewQuizController),
+	fx.Provide(NewQuestionController),
+	fx.Provide(NewChoiceController),
 )
