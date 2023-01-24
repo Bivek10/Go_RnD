@@ -9,4 +9,5 @@ var Module = fx.Options(
 	fx.Provide(NewQuizRepository),
 	fx.Provide(NewQuestionRepository),
 	fx.Provide(NewChoiceRepository),
+	fx.Provide(NewQuizHistoryRepository),
 )

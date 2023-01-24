@@ -10,6 +10,7 @@ var Module = fx.Options(
 	fx.Provide(NewQuizRoutes),
 	fx.Provide(NewQuestionRoutes),
 	fx.Provide(NewChoicesRoutes),
+	fx.Provide(NewHistoryRoutes),
 	//fx.Provide(NewPlantRoutes),
 )
 
@@ -24,12 +25,12 @@ type Route interface {
 // NewRoutes sets up routes
 func NewRoutes(
 	//utilityRoutes UtilityRoutes,
-
 	userRoutes UserRoutes,
 	//plantRoutes PlantRoutes,
 	quizRoutes QuizRoutes,
 	questonRoutes QuestionsRoutes,
 	choiceRoutes ChoiceRoutes,
+	historyRoutes HistoryRoutes,
 
 ) Routes {
 	return Routes{
@@ -37,8 +38,8 @@ func NewRoutes(
 		userRoutes,
 		quizRoutes,
 		questonRoutes,
-
 		choiceRoutes,
+		historyRoutes,
 		//plantRoutes,
 	}
 }

@@ -53,7 +53,7 @@ func (c ChoiceRepository) GetChoicesByQuestionID(pagination utils.Pagination, qu
 	var err error
 	queryBuilder := c.db.DB.Limit(pagination.PageSize).Offset(pagination.Offset).Order("created_at desc")
 	queryBuilder = queryBuilder.Model(&models.Choices{})
-	queryBuilder.Where(&models.Choices{Q_ID: question_id})
+	queryBuilder.Where(&models.Choices{Question_ID: question_id})
 	err = queryBuilder.Find(&choices).Error
 	return choices, totalRows, err
 }

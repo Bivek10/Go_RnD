@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users (
-  user_id VARCHAR(45) NOT NULL,
+  id VARCHAR(45) NOT NULL,
   full_name VARCHAR(45) NULL,
   email VARCHAR(100) NOT NULL,
   phone_number VARCHAR(10) NOT NULL,
@@ -9,6 +9,6 @@ CREATE TABLE IF NOT EXISTS users (
   created_at DATETIME NOT NULL,
   updated_at DATETIME NULL,
   deleted_at DATETIME NULL,
-  PRIMARY KEY (user_id)
+  PRIMARY KEY (id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
