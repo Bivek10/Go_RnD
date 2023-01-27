@@ -11,4 +11,5 @@ var Module = fx.Options(
 	fx.Provide(NewQuestionController),
 	fx.Provide(NewChoiceController),
 	fx.Provide(NewHistoryController),
+	fx.Provide(NewClientController),
 )

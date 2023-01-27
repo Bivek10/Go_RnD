@@ -37,6 +37,8 @@ type Env struct {
 	TwilioSID       string `mapstructure:"TWILIO_SID"`
 	TwilioAuthToken string `mapstructure:"TWILIO_AUTH_TOKEN"`
 	TwilioSMSFrom   string `mapstructure:"TWILIO_SMS_FROM"`
+	JWTSecretKey    string `mapstructure:"JWTSecretKey"`
+	JWRTSecretKey    string `mapstructure:"JWRTSecretKey"`
 }
 
 // NewEnv creates a new environment
@@ -57,6 +59,6 @@ func NewEnv() Env {
 	}
 
 	log.Printf("%+v \n", env)
-	
+
 	return env
 }

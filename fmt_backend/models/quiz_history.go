@@ -2,9 +2,9 @@ package models
 
 type QuizHistory struct {
 	Base
-	Quiz_ID int64 `json:"quiz_id"`
-	User_ID int64 `json:"user_id"`
-	Score   int64 `json:"score"`
+	Quiz_ID int64  `json:"quiz_id"`
+	User_ID string `json:"user_id"`
+	Score   int64  `json:"score"`
 }
 
 func (m QuizHistory) TableName() string {

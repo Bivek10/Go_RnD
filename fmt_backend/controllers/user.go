@@ -51,19 +51,13 @@ func (cc UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	userid, err := cc.firebaseService.CreateUser(user.Email, user.Password)
+	//userid, err := cc.firebaseService.CreateUser(user.Email, user.Password)
 
 	//fmt.Printf("")
-	if err != nil {
-		cc.logger.Zap.Error("Error [FirebaseUser] failed: ", err.Error())
-		err := errors.InternalError.Wrap(err, "Failed to create firebase user")
-		responses.HandleError(c, err)
-		return
-	}
-	user.UserId = userid
+
 	//encrypt user password
 
-	user.Password = utils.EncryptPassword([]byte(user.Password))
+	//user.Password = utils.EncryptPassword([]byte(user.Password))
 
 	if err := cc.userService.WithTrx(trx).CreateUser(user); err != nil {
 		cc.logger.Zap.Error("Error [CreateUser] [db CreateUser]: ", err.Error())
@@ -103,14 +97,12 @@ func (cc UserController) UserLogin(c *gin.Context) {
 
 	users, err := cc.firebaseService.GetUserByEmail(user.Email)
 
-
 	if err != nil {
 		cc.logger.Zap.Error("Email not found", err.Error())
 		err := errors.InternalError.Wrap(err, "Failed to get users by email")
 		responses.HandleError(c, err)
 		return
 	}
-	
 
 	token, err := cc.firebaseService.CreateCustomToken(users.UID)
 

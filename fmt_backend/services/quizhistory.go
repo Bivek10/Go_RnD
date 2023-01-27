@@ -31,6 +31,6 @@ func (c QuizHistoryServices) GetAllHistory(pagination utils.Pagination) ([]model
 	return c.repository.GetAllHistory(pagination)
 }
 
-func (c QuizHistoryServices) GetHistoryByUserID(pagination utils.Pagination, user_id int) ([]models.QuizHistory, int64, error) {
-	return c.repository.GetHistoryByUserID(pagination, int64(user_id))
+func (c QuizHistoryServices) GetHistoryByUserID(pagination utils.Pagination, user_id string) ([]models.QuizHistory, int64, error) {
+	return c.repository.GetHistoryByUserID(pagination, user_id)
 }

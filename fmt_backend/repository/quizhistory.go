@@ -37,7 +37,7 @@ func (c QuizHistoryRepository) GetAllHistory(pagination utils.Pagination) ([]mod
 	var quizhistory []models.QuizHistory
 	var totalRows int64 = 0
 	queryBuilder := c.db.DB.Limit(pagination.PageSize).Offset(pagination.Offset).Order("created_at desc")
-	queryBuilder = queryBuilder.Model(&models.Choices{})
+	queryBuilder = queryBuilder.Model(&models.QuizHistory{})
 
 	if pagination.Keyword != "" {
 		searchQuery := "%" + pagination.Keyword + "%"
@@ -47,7 +47,7 @@ func (c QuizHistoryRepository) GetAllHistory(pagination utils.Pagination) ([]mod
 	return quizhistory, totalRows, err
 }
 
-func (c QuizHistoryRepository) GetHistoryByUserID(pagination utils.Pagination, user_id int64) ([]models.QuizHistory, int64, error) {
+func (c QuizHistoryRepository) GetHistoryByUserID(pagination utils.Pagination, user_id string) ([]models.QuizHistory, int64, error) {
 	var quizhistory []models.QuizHistory
 	var totalRows int64 = 0
 	var err error

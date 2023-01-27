@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/bivek/fmt_backend/constants"
 	"github.com/bivek/fmt_backend/errors"
@@ -55,27 +54,27 @@ func (qq HistoryController) CreateHistory(c *gin.Context) {
 // get allquiz  data
 func (qq HistoryController) GetAllHistory(c *gin.Context) {
 	pagination := utils.BuildPagination(c)
-	choices, count, err := qq.quizHistoryServices.GetAllHistory(pagination)
+	History, count, err := qq.quizHistoryServices.GetAllHistory(pagination)
 	if err != nil {
 		qq.logger.Zap.Error("Error geting history records", err.Error())
 		err := errors.InternalError.Wrap(err, "Failed to get history data")
 		responses.HandleError(c, err)
 		return
 	}
-	responses.JSONCount(c, http.StatusOK, choices, count)
+	responses.JSONCount(c, http.StatusOK, History, count)
 }
 
 // get allquiz by quiz id data
 func (qq HistoryController) GetHistoryByUserID(c *gin.Context) {
 	id := c.Param("user_id")
 	pagination := utils.BuildPagination(c)
-	user_id, errs := strconv.Atoi(id)
-	if errs != nil {
-		qq.logger.Zap.Error("Error converting the string into int", errs.Error())
-		err := errors.InternalError.Wrap(errs, "Failed failed to convert error to int")
-		responses.HandleError(c, err)
-		return
-	}
+	user_id := id
+	// if errs != nil {
+	// 	qq.logger.Zap.Error("Error converting the string into int", errs.Error())
+	// 	err := errors.InternalError.Wrap(errs, "Failed failed to convert error to int")
+	// 	responses.HandleError(c, err)
+	// 	return
+	// }
 	quizhistory, count, err := qq.quizHistoryServices.GetHistoryByUserID(pagination, user_id)
 	if err != nil {
 		qq.logger.Zap.Error("Error geting quiz history records", err.Error())
