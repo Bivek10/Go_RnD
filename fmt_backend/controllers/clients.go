@@ -10,8 +10,9 @@ import (
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/responses"
 	"github.com/bivek/fmt_backend/services"
-
+	"github.com/bivek/fmt_backend/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -40,7 +41,9 @@ func NewClientController(
 
 // CreateUser -> Create User
 func (cc ClientController) CreateClients(c *gin.Context) {
+	println("hello new routes")
 	clients := models.Clients{}
+	clientrequestresponse := models.ClientRequestResponse{}
 	trx := c.MustGet(constants.DBTransaction).(*gorm.DB) // explicitly define the value type..
 
 	if err := c.ShouldBindJSON(&clients); err != nil {
@@ -49,24 +52,47 @@ func (cc ClientController) CreateClients(c *gin.Context) {
 		responses.HandleError(c, err)
 		return
 	}
+	// encrypt password.
+	clients.Password = utils.EncryptPassword([]byte(clients.Password))
 
-	clientResposne, message, err := cc.clientService.WithTrx(trx).CreateClient(clients)
-	if message != "" {
-		responses.SuccessJSON(c, http.StatusOK, message)
-	}
-	if clientResposne.AccessToken == "" {
-		responses.SuccessJSON(c, http.StatusOK, "Failed to generate access_token")
-	}
-	if clientResposne.RefreshToken == "" {
-		responses.SuccessJSON(c, http.StatusOK, "Failed to generate refresht_token")
-	}
+	if err := cc.clientService.WithTrx(trx).CreateClient(clients); err != nil {
 
-	if err != nil {
-		cc.logger.Zap.Error("Error [CreateUser] [db CreateUser]: ", err.Error())
-		err := errors.InternalError.Wrap(err, "Failed to create err ")
+		if mysqlError, ok := err.(*mysql.MySQLError); ok {
+			if mysqlError.Number == 1062 {
+				err := errors.Conflict.Wrap(err, "Email already exits!")
+				errs := errors.SetCustomMessage(err, "Email already exists!")
+				responses.HandleError(c, errs)
+				return
+			}
+		}
+		cc.logger.Zap.Error("Error [CreateClient user] [db Clientuser]: ", err.Error())
+		err := errors.InternalError.Wrap(err, "Failed to create client user")
 		responses.HandleError(c, err)
 		return
 	}
-	responses.SuccessJSON(c, http.StatusOK, "User Created Sucessfully")
+
+	clientrequestresponse.FirstName = clients.FirstName
+	clientrequestresponse.LastName = clients.LastName
+	clientrequestresponse.Address = clients.Address
+	clientrequestresponse.Email = clients.Email
+
+	accesstoken, err, refreshtoken, refresherror := utils.GenerateJWT(clients.Email)
+	if err != nil {
+		cc.logger.Zap.Error("Error creating the accesstoken: ", err.Error())
+		err := errors.InternalError.Wrap(err, "Failed to create access token")
+		responses.HandleError(c, err)
+		return
+	}
+	
+	if refresherror != nil {
+		cc.logger.Zap.Error("Error creating the refreshtoken: ", err.Error())
+		err := errors.InternalError.Wrap(err, "Failed to create refresht token")
+		responses.HandleError(c, err)
+		return
+	}
+	clientrequestresponse.AccessToken = accesstoken
+	clientrequestresponse.RefreshToken = refreshtoken
+
+	responses.SuccessJSON(c, http.StatusOK, clientrequestresponse)
 
 }

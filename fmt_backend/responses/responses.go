@@ -1,8 +1,9 @@
 package responses
 
 import (
-	"github.com/bivek/fmt_backend/errors"
 	"os"
+
+	"github.com/bivek/fmt_backend/errors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,7 +45,6 @@ func HandleError(c *gin.Context, err error) {
 		response.Error = err.Error()
 	}
 	response.Message = customMessage
-
 	if customMessage == "" {
 		response.Message = "An error has occurred. Please try again later."
 	}

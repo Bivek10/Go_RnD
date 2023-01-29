@@ -15,7 +15,7 @@ func GenerateJWT(email string) (string, error, string, error) {
 	clams["email"] = email
 	clams["exp"] = time.Now().Add(time.Minute * 30).Unix()
 
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, clams)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, clams)
 	accessToken, err := token.SignedString(mySigningKey)
 
 	refreshToken := jwt.New(jwt.SigningMethodHS256)

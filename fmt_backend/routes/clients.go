@@ -18,10 +18,10 @@ type ClientRoutes struct {
 // Setup user routes
 func (i ClientRoutes) Setup() {
 	i.logger.Zap.Info(" Setting up client routes")
-	users := i.router.Gin.Group("/")
+	newusers := i.router.Gin.Group("/newuser")
 	{
 		//users.GET("", i.ClientsController.GetAllUsers)
-		users.POST("register", i.trxMiddleware.DBTransactionHandle(), i.clientsController.CreateClients)
+		newusers.POST("create", i.trxMiddleware.DBTransactionHandle(), i.clientsController.CreateClients)
 		//users.POST("login", i.ClientsController.UserLogin)
 	}
 }

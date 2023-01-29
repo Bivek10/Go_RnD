@@ -71,3 +71,5 @@ and,
 
 
 <!-- inotifywait -e modify -e move -e create -e delete -e attrib --exclude '(__debug_bin|\.git|\.idea|\.http|\.json)' -r . -->
+
+//export DOCKER_HOST="tcp://HOST:2375"

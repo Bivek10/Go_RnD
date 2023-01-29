@@ -25,7 +25,7 @@ func (c ClientService) WithTrx(trxHandle *gorm.DB) ClientService {
 }
 
 // CreateUser -> call to create the User
-func (c ClientService) CreateClient(client models.Clients) (models.ClientRequestResponse, string, error) {
-	clientresponse, message, err := c.repository.CreateClient(client)
-	return clientresponse, message, err
+func (c ClientService) CreateClient(client models.Clients) error {
+	err := c.repository.CreateClient(client)
+	return err
 }
