@@ -12,6 +12,7 @@ type ClientRoutes struct {
 	router            infrastructure.Router
 	clientsController controllers.ClientController
 	middleware        middlewares.FirebaseAuthMiddleware
+	jwtMiddleware     middlewares.JWTAuthMiddleWare
 	trxMiddleware     middlewares.DBTransactionMiddleware
 }
 
@@ -23,7 +24,7 @@ func (i ClientRoutes) Setup() {
 		//users.GET("", i.ClientsController.GetAllUsers)
 		newusers.POST("login", i.trxMiddleware.DBTransactionHandle(), i.clientsController.LoginClient)
 		newusers.POST("create", i.trxMiddleware.DBTransactionHandle(), i.clientsController.CreateClients)
-		newusers.POST("refreshToken", i.trxMiddleware.DBTransactionHandle(), i.clientsController.ReGenerateClientToken)
+		newusers.POST("refreshToken", i.clientsController.ReGenerateClientToken)
 		//users.POST("login", i.ClientsController.UserLogin)
 	}
 }
@@ -35,6 +36,7 @@ func NewClientRoutes(
 	clientsController controllers.ClientController,
 	middleware middlewares.FirebaseAuthMiddleware,
 	trxMiddleware middlewares.DBTransactionMiddleware,
+	jwtMiddlewware middlewares.JWTAuthMiddleWare,
 ) ClientRoutes {
 	return ClientRoutes{
 		router:            router,
@@ -42,5 +44,6 @@ func NewClientRoutes(
 		clientsController: clientsController,
 		middleware:        middleware,
 		trxMiddleware:     trxMiddleware,
+		jwtMiddleware:     jwtMiddlewware,
 	}
 }
