@@ -21,7 +21,9 @@ func (i ClientRoutes) Setup() {
 	newusers := i.router.Gin.Group("/newuser")
 	{
 		//users.GET("", i.ClientsController.GetAllUsers)
+		newusers.POST("login", i.trxMiddleware.DBTransactionHandle(), i.clientsController.LoginClient)
 		newusers.POST("create", i.trxMiddleware.DBTransactionHandle(), i.clientsController.CreateClients)
+		newusers.POST("refreshToken", i.trxMiddleware.DBTransactionHandle(), i.clientsController.ReGenerateClientToken)
 		//users.POST("login", i.ClientsController.UserLogin)
 	}
 }

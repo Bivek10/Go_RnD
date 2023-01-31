@@ -1,5 +1,7 @@
 package models
 
+import "github.com/golang-jwt/jwt"
+
 type Clients struct {
 	Base
 	FirstName string `json:"first_name"`
@@ -25,4 +27,18 @@ type ClientRequestResponse struct {
 	Address      string `json:"address"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+}
+
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
+type RefreshTokenRequestResponse struct {
+	RefreshToken string `json:"refresh_token"`
+	AcceessToken string `json:"access_token"`
+}
+
+type SignedDetails struct {
+	Email string
+	jwt.StandardClaims
 }

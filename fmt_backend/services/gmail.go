@@ -6,7 +6,6 @@ import (
 	"github.com/bivek/fmt_backend/infrastructure"
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/utils"
-
 	"google.golang.org/api/gmail/v1"
 )
 

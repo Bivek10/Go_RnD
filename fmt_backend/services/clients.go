@@ -29,3 +29,8 @@ func (c ClientService) CreateClient(client models.Clients) error {
 	err := c.repository.CreateClient(client)
 	return err
 }
+
+func (c ClientService) LoginClient(Email string) (models.Clients, error){
+	clients, err := c.repository.LoginClient(Email)
+	return clients, err
+}

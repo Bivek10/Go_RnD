@@ -31,31 +31,14 @@ func (c ClientRepository) CreateClient(Clients models.Clients) error {
 
 	err := c.db.DB.Create(&Clients).Error
 
-	//queryBuilder = queryBuilder.Model(&models.Clients{}).Where(&models.User{Email: Clients.Email}).Find(clients)
-	/*
-		if clients.Email != "" {
-			message = "Email already exist!"
-		} else {
-			clients.Password = utils.EncryptPassword([]byte(clients.Password))
-			err = c.db.DB.Create(clients).Error
-			clientrequestresponse.FirstName = clients.FirstName
-			clientrequestresponse.LastName = clients.LastName
-			clientrequestresponse.Address = clients.Address
-			clientrequestresponse.Email = clients.Email
-			
-			accesstoken, err, refreshtoken, refresherror := utils.GenerateJWT(clients.Email)
-			
-			if err != nil {
-				return clientrequestresponse, message, err
-			}
-			if refresherror != nil {
-				return clientrequestresponse, message, err
-			}
-			clientrequestresponse.AccessToken = accesstoken
-			clientrequestresponse.RefreshToken = refreshtoken
-
-		}
-	*/
-
 	return err
+}
+
+func (c ClientRepository) LoginClient(Email string) (models.Clients, error) {
+	clients := models.Clients{}
+	queryBuilder := c.db.DB
+	queryBuilder = queryBuilder.Model(&models.Clients{})
+	queryBuilder.Where(&models.Clients{Email: Email})
+	err := queryBuilder.Find(&clients).Error
+	return clients, err
 }

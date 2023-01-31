@@ -15,9 +15,9 @@ func EncryptPassword(pass []byte) string {
 
 func DecryptPassword(hasedpass []byte, pass []byte) bool {
 	err := bcrypt.CompareHashAndPassword(hasedpass, pass)
+	print(err)
 	if err != nil {
-		panic(err)
+		return false
 	}
 	return true
-
 }
