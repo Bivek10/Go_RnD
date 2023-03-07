@@ -12,6 +12,7 @@ type HistoryRoutes struct {
 	historyController controllers.HistoryController
 	middlewares       middlewares.FirebaseAuthMiddleware
 	trxMiddleware     middlewares.DBTransactionMiddleware
+	jwtMiddleware     middlewares.JWTAuthMiddleWare
 }
 
 //setup quiz routes
@@ -21,9 +22,9 @@ func (i HistoryRoutes) Setup() {
 	quizs := i.router.Gin.Group("/history")
 	{
 		quizs.GET("", i.historyController.GetAllHistory)
-		quizs.GET(":user_id", i.historyController.GetHistoryByUserID)
+		quizs.GET(":user_id", i.jwtMiddleware.Handle(), i.historyController.GetHistoryByUserID)
 
-		quizs.POST("", i.trxMiddleware.DBTransactionHandle(), i.historyController.CreateHistory)
+		quizs.POST("", i.jwtMiddleware.Handle(), i.trxMiddleware.DBTransactionHandle(), i.historyController.CreateHistory)
 	}
 }
 
@@ -35,6 +36,7 @@ func NewHistoryRoutes(
 	historyController controllers.HistoryController,
 	middlewares middlewares.FirebaseAuthMiddleware,
 	trxMiddleware middlewares.DBTransactionMiddleware,
+	jwtMiddlerware middlewares.JWTAuthMiddleWare,
 ) HistoryRoutes {
 	return HistoryRoutes{
 		logger:            logger,
@@ -42,5 +44,6 @@ func NewHistoryRoutes(
 		historyController: historyController,
 		middlewares:       middlewares,
 		trxMiddleware:     trxMiddleware,
+		jwtMiddleware:     jwtMiddlerware,
 	}
 }

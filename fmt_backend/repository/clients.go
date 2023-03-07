@@ -38,7 +38,7 @@ func (c ClientRepository) LoginClient(Email string) (models.Clients, error) {
 	clients := models.Clients{}
 	queryBuilder := c.db.DB
 	queryBuilder = queryBuilder.Model(&models.Clients{})
-	queryBuilder.Where(&models.Clients{Email: Email})
+	queryBuilder.Where("email = ?", Email)
 	err := queryBuilder.Find(&clients).Error
 	return clients, err
 }

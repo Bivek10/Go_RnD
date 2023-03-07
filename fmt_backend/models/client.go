@@ -2,13 +2,17 @@ package models
 
 import "github.com/golang-jwt/jwt"
 
-type Clients struct {
+type BaseClient struct {
 	Base
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email" gorm:"unique"`
-	Address   string `json:"address"`
-	Password  string `json:"password"`
+	FirstName string `form:"first_name" json:"first_name"`
+	LastName  string `form:"last_name" json:"last_name"`
+	Email     string `form:"email" json:"email" gorm:"unique"`
+	Address   string `form:"address" json:"address"`
+	Password string `form:"password" json:"password"`
+}
+type Clients struct {
+	BaseClient
+	ProfilePhoto string `form:"profile_photo" json:"profile_photo" bson:",omitempty" `
 }
 
 func (m Clients) TableName() string {
@@ -34,8 +38,8 @@ type RefreshTokenRequest struct {
 }
 
 type RefreshTokenRequestResponse struct {
-	RefreshToken string `json:"refresh_token"`
 	AcceessToken string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type SignedDetails struct {

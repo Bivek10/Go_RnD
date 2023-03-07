@@ -1,14 +1,14 @@
-FROM golang:1.16-alpine
+FROM golang:alpine
 
 # Required because go requires gcc to build
-RUN apk update \
-    && apk add build-base
+RUN apk add build-base
 
 RUN apk add inotify-tools
 
-RUN apk add --no-cache ffmpeg
-
 RUN echo $GOPATH
+
+# Build Delve
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
 
 COPY . /clean_web
 
@@ -28,8 +28,6 @@ RUN cp /tmp/go-migrate/migrate /usr/bin/migrate
 
 WORKDIR /clean_web
 
-RUN go mod tidy
-
-RUN go get github.com/go-delve/delve/cmd/dlv@v1.7.3
+RUN go mod download
 
 CMD sh /clean_web/docker/run.sh

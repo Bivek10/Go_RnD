@@ -12,6 +12,7 @@ type QuestionsRoutes struct {
 	questionController controllers.QuestionsController
 	middlewares        middlewares.FirebaseAuthMiddleware
 	trxMiddleware      middlewares.DBTransactionMiddleware
+	jwtMiddleware      middlewares.JWTAuthMiddleWare
 }
 
 //setup quiz routes
@@ -20,8 +21,8 @@ func (i QuestionsRoutes) Setup() {
 	i.logger.Zap.Info("setting up questions routes")
 	quizs := i.router.Gin.Group("/questions")
 	{
-		quizs.GET("", i.questionController.GetAllQuestion)
-		quizs.GET(":quiz_id", i.questionController.GetQuestionByID)
+		quizs.GET("", i.jwtMiddleware.Handle(), i.questionController.GetAllQuestion)
+		quizs.GET(":quiz_id", i.jwtMiddleware.Handle(), i.questionController.GetQuestionByID)
 
 		quizs.POST("create", i.trxMiddleware.DBTransactionHandle(), i.questionController.CreateQuestion)
 	}
@@ -35,6 +36,7 @@ func NewQuestionRoutes(
 	question controllers.QuestionsController,
 	middlewares middlewares.FirebaseAuthMiddleware,
 	trxMiddleware middlewares.DBTransactionMiddleware,
+	jwtMiddlware middlewares.JWTAuthMiddleWare,
 ) QuestionsRoutes {
 	return QuestionsRoutes{
 		logger:             logger,
@@ -42,5 +44,6 @@ func NewQuestionRoutes(
 		questionController: question,
 		middlewares:        middlewares,
 		trxMiddleware:      trxMiddleware,
+		jwtMiddleware:      jwtMiddlware,
 	}
 }

@@ -9,7 +9,7 @@ import (
 )
 
 type JWTAuthMiddleWare struct {
-	jwtService services.JWTService 
+	jwtService services.JWTService
 	logger     infrastructure.Logger
 	env        infrastructure.Env
 	db         infrastructure.Database
@@ -37,6 +37,7 @@ func (m JWTAuthMiddleWare) Handle() gin.HandlerFunc {
 		if !ok || err != nil {
 			m.logger.Zap.Error("Error verifying auth token: ", err.Error())
 			err = errors.Unauthorized.Wrap(err, "Something went wrong")
+			err = errors.SetCustomMessage(err, "Unauthorized")
 			responses.HandleError(c, err)
 			c.Abort()
 			return

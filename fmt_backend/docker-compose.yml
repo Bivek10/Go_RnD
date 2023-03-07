@@ -11,7 +11,7 @@ services:
     volumes:
       - .:/clean_web
     env_file: .env
-    container_name: boilerplate-web
+    container_name: quiz_web
     depends_on:
       - database
 
@@ -23,7 +23,6 @@ services:
       MYSQL_USER: ${DBUsername}
       MYSQL_PASSWORD: ${DBPassword}
       MYSQL_DATABASE: ${DBName}
-    container_name: boilerplate-db
     command:
       [
         "--character-set-server=utf8mb4",
@@ -33,7 +32,8 @@ services:
     ports:
       - 33066:3306
     volumes:
-      - boilerplate_db:/var/lib/mysql
+      - quiz_db:/var/lib/mysql
+    container_name: database
 
   adminer:
     image: adminer
@@ -41,4 +41,4 @@ services:
       - ${AdminerPort}:8080
 
 volumes:
-  boilerplate_db:
+  quiz_db:

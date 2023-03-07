@@ -2,11 +2,11 @@ package controllers
 
 import (
 	//"fmt"
-
 	"net/http"
 
 	"github.com/bivek/fmt_backend/constants"
 	"github.com/bivek/fmt_backend/errors"
+	"github.com/bivek/fmt_backend/helpers"
 	"github.com/bivek/fmt_backend/infrastructure"
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/responses"
@@ -45,20 +45,53 @@ func NewClientController(
 
 // CreateUser -> Create User
 func (cc ClientController) CreateClients(c *gin.Context) {
-	clients := models.Clients{}
+	cc.logger.Zap.Info("client running ============")
+	clients := models.BaseClient{}
 	clientrequestresponse := models.ClientRequestResponse{}
 	trx := c.MustGet(constants.DBTransaction).(*gorm.DB) // explicitly define the value type..
 
-	if err := c.ShouldBindJSON(&clients); err != nil {
+	imageFile, imageFileHeader, err := c.Request.FormFile("profile_photo")
+
+	if err != nil {
+		msg := "Error in getting image from form-file"
+		cc.logger.Zap.Error(msg, err)
+		err = errors.BadRequest.Wrap(err, msg)
+		responses.HandleError(c, err)
+		return
+	}
+	if imageFile == nil || imageFileHeader == nil {
+		msg := "Invalid image "
+		cc.logger.Zap.Error(msg, err)
+		err = errors.BadRequest.Wrap(err, msg)
+		responses.HandleError(c, err)
+		return
+	}
+
+	filename, err := helpers.FileUpload(c, imageFileHeader, constants.ClientImage)
+
+	if err != nil {
+		cc.logger.Zap.Error("Error failed to upload photo : ", err)
+		err := errors.BadRequest.Wrap(err, "Failed Upload photo")
+		responses.HandleError(c, err)
+		return
+	}
+
+	if err := c.ShouldBind(&clients); err != nil {
 		cc.logger.Zap.Error("Error [CreateUser] (ShouldBindJson) : ", err)
 		err := errors.BadRequest.Wrap(err, "Failed to bind user data")
 		responses.HandleError(c, err)
 		return
 	}
+
+	clientData := models.Clients{
+		BaseClient:   clients,
+		ProfilePhoto: filename,
+	}
+
 	// encrypt password.
 	clients.Password = utils.EncryptPassword([]byte(clients.Password))
 
-	if err := cc.clientService.WithTrx(trx).CreateClient(clients); err != nil {
+	if err := cc.clientService.WithTrx(trx).CreateClient(clientData); err != nil {
 
 		if mysqlError, ok := err.(*mysql.MySQLError); ok {
 			if mysqlError.Number == 1062 {
@@ -193,7 +226,7 @@ func (cc ClientController) ReGenerateClientToken(c *gin.Context) {
 		refreshTokenRequestResponse.AcceessToken = access_token
 		refreshTokenRequestResponse.RefreshToken = refresh_token
 		responses.SuccessJSON(c, http.StatusOK, refreshTokenRequestResponse)
-		
+
 	} else {
 		err := errors.Conflict.Wrap(err, "Unauthorized")
 		errs := errors.SetCustomMessage(err, "Unauthorized")
