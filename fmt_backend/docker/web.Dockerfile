@@ -11,6 +11,7 @@ RUN echo $GOPATH
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 
 COPY . /clean_web
+RUN mkdir /files
 
 ARG VERSION="4.13.0"
 

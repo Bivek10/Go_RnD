@@ -2,6 +2,7 @@ package controllers
 
 import (
 	//"fmt"
+
 	"net/http"
 
 	"github.com/bivek/fmt_backend/constants"
@@ -59,19 +60,11 @@ func (cc ClientController) CreateClients(c *gin.Context) {
 		responses.HandleError(c, err)
 		return
 	}
+
 	if imageFile == nil || imageFileHeader == nil {
 		msg := "Invalid image "
 		cc.logger.Zap.Error(msg, err)
 		err = errors.BadRequest.Wrap(err, msg)
-		responses.HandleError(c, err)
-		return
-	}
-
-	filename, err := helpers.FileUpload(c, imageFileHeader, constants.ClientImage)
-
-	if err != nil {
-		cc.logger.Zap.Error("Error failed to upload photo : ", err)
-		err := errors.BadRequest.Wrap(err, "Failed Upload photo")
 		responses.HandleError(c, err)
 		return
 	}
@@ -82,7 +75,16 @@ func (cc ClientController) CreateClients(c *gin.Context) {
 		responses.HandleError(c, err)
 		return
 	}
+	filename, errd := helpers.FileUpload(c, imageFileHeader, constants.ClientImage)
 
+	if errd != nil {
+		cc.logger.Zap.Error("Error failed to upload photo : ", err)
+		err := errors.BadRequest.Wrap(err, "Failed Upload photo")
+		responses.HandleError(c, err)
+		return
+	}
+
+	cc.logger.Zap.Info("file name :==========", filename)
 	clientData := models.Clients{
 		BaseClient:   clients,
 		ProfilePhoto: filename,
@@ -95,6 +97,8 @@ func (cc ClientController) CreateClients(c *gin.Context) {
 
 		if mysqlError, ok := err.(*mysql.MySQLError); ok {
 			if mysqlError.Number == 1062 {
+				helpers.DeleteFileUpload(filename)
+				cc.logger.Zap.Info("filepathname", filename)
 				err := errors.Conflict.Wrap(err, "Email already exits!")
 				errs := errors.SetCustomMessage(err, "Email already exists!")
 				responses.HandleError(c, errs)
@@ -111,7 +115,12 @@ func (cc ClientController) CreateClients(c *gin.Context) {
 	clientrequestresponse.Address = clients.Address
 	clientrequestresponse.Email = clients.Email
 
+	fileURL := "http://" + c.Request.Host + filename
+
+	clientrequestresponse.ImageUrl = fileURL
+
 	accesstoken, err, refreshtoken, refresherror := cc.jwtServices.GenerateJWT(clients.Email)
+
 	if err != nil {
 		cc.logger.Zap.Error("Error creating the accesstoken: ", err.Error())
 		err := errors.InternalError.Wrap(err, "Failed to create access token")
@@ -235,3 +244,5 @@ func (cc ClientController) ReGenerateClientToken(c *gin.Context) {
 	}
 
 }
+
+

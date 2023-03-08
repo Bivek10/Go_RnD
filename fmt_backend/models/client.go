@@ -8,7 +8,7 @@ type BaseClient struct {
 	LastName  string `form:"last_name" json:"last_name"`
 	Email     string `form:"email" json:"email" gorm:"unique"`
 	Address   string `form:"address" json:"address"`
-	Password string `form:"password" json:"password"`
+	Password  string `form:"password" json:"password"`
 }
 type Clients struct {
 	BaseClient
@@ -31,6 +31,7 @@ type ClientRequestResponse struct {
 	Address      string `json:"address"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+	ImageUrl     string `json:"image_url"`
 }
 
 type RefreshTokenRequest struct {

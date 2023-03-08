@@ -10,6 +10,7 @@ services:
       - ${DebugPort}:2345
     volumes:
       - .:/clean_web
+      - ./clients-image:/files
     env_file: .env
     container_name: quiz_web
     depends_on:

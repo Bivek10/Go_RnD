@@ -25,6 +25,7 @@ func (i ClientRoutes) Setup() {
 		newusers.POST("login", i.trxMiddleware.DBTransactionHandle(), i.clientsController.LoginClient)
 		newusers.POST("register", i.trxMiddleware.DBTransactionHandle(), i.clientsController.CreateClients)
 		newusers.POST("refreshToken", i.clientsController.ReGenerateClientToken)
+		newusers.Static("files", "./clients-image")
 		//users.POST("login", i.ClientsController.UserLogin)
 	}
 }
