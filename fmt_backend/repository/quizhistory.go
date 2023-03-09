@@ -57,3 +57,12 @@ func (c QuizHistoryRepository) GetHistoryByUserID(pagination utils.Pagination, u
 	err = queryBuilder.Find(&quizhistory).Error
 	return quizhistory, totalRows, err
 }
+
+func (c QuestionRepository) GetUserByID(user_id int) (models.Clients, error) {
+	clients := models.Clients{}
+	queryBuilder := c.db.DB
+	queryBuilder = queryBuilder.Model(&models.Clients{})
+	queryBuilder.Where("id=?", user_id)
+	err := queryBuilder.Find(&clients).Error
+	return clients, err
+}

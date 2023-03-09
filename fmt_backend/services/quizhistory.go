@@ -34,3 +34,7 @@ func (c QuizHistoryServices) GetAllHistory(pagination utils.Pagination) ([]model
 func (c QuizHistoryServices) GetHistoryByUserID(pagination utils.Pagination, user_id string) ([]models.QuizHistory, int64, error) {
 	return c.repository.GetHistoryByUserID(pagination, user_id)
 }
+
+func (c QuizHistoryServices) GetUserByID( user_id int) (models.Clients, error) {
+	return c.GetUserByID( user_id)
+}
